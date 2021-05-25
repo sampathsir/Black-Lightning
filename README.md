@@ -86,3 +86,8 @@ https://github.com/KeinShin/Black-Lightning/graphs/contributors
 
 
  Copyright (C) KeinShin@GitHub - Black-Lightning
+
+
+# License
+
+```https://github.com/KeinShin/Black-Lightning/blob/rebirth/License```
