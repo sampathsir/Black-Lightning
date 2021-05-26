@@ -48,7 +48,7 @@ async def force(client, message):
         for s in i:
          channel.append(s)
     try:
-        await message.edit(f"**Force Subscribe enable for channel {txt} in group {name}**\n\n© [KeinShin](t.me/keinshin)")
+        await message.edit(f"**Force Subscribe enable for channel {txt} in group {name}**\n\n© [Black Lightning](https://github.com/KeinShin/Black-Lightning)")
         insert_chet(name , txt)
     except BaseException as e:
         await message.edit(f"**ERROR** - {e}")
