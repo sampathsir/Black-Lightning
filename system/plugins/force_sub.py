@@ -15,7 +15,8 @@ from system.datas_sqlite.chat_sqllite import (
    get_safe_user,
    d as chat,
    c,
-   chats
+   chats,
+   safe_users
 
 )
 
@@ -48,7 +49,7 @@ async def force(client, message):
         for s in i:
          channel.append(s)
     try:
-        await message.edit(f"**Force Subscribe enable for channel {txt} in group {name}**\n\n© [Black Lightning](https://github.com/KeinShin/Black-Lightning)")
+        await message.edit(f"**Force Subscribe enable** for channel {txt} in group {name}\n\n© [Black Lightning](https://github.com/KeinShin/Black-Lightning)")
         insert_chet(name , txt)
     except BaseException as e:
         await message.edit(f"**ERROR** - {e}")
@@ -62,8 +63,8 @@ async def sub(client, message: Message):
     sm=  f"@{m}"
     aaia = message.from_user['id']
  
- 
-    if  get_safe_user(aaia):
+  
+    if message.from_user.username or aaia in safe_users:
         return
     try:
      keys = sum(any(sm in s for s in subList) for subList in chat.values())
@@ -78,7 +79,7 @@ async def sub(client, message: Message):
                 [InlineKeyboardButton("Dis-Card ( only admin )", callback_data="unmute_{}".format(message.from_user.id))]
                 ]
             )
-        await bot.send_message(message.chat.id, "You havent subscribe [{}]({}). Go and Subscribe Now! then press un-mute\n\n[A Feature By Black Lightning Userbot](https://github.com/KeinShin/Black-Lightning)".format(chat[sm],aaia ), reply_markup=mkp)
+        await bot.send_message(message.chat.id, "[{}]({}), You havent subscribe our channel [{}]({}). Go and Subscribe Now! then press un-mute\n\n[Featured By Black Lightning](https://github.com/KeinShin/Black-Lightning)".format(message.chat.first_name, f'tg://user?id={message.chat.id}',chat[sm],aaia ), reply_markup=mkp)
      
 
 @bot.on_callback_query(filters.regex(pattern="chata"))
@@ -166,6 +167,7 @@ async def s(client, chet: CallbackQuery):
       await bot.send_message(chet.id, text=f"**User Unmuted by admin {chet.from_user.username}**")
 
 COMMAND_HELP.update({
-    "force_sub": f"`{HNDLR}forcesub` **(group) (channel)**",
-    "": ""
+    "force_sub": f"`{HNDLR}forcesub` **(channel) (group)**",
+    "force_sub's": "**Use**: `Force Subscribe the channel in that particular group via your assistant`\
+    \n**Note**: `First add assistant to that channel as admin and similary add assistant in that group with admins rights` ( add admins is not mandatory )"
 })
