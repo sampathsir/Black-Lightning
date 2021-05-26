@@ -168,6 +168,6 @@ async def s(client, chet: CallbackQuery):
 
 COMMAND_HELP.update({
     "force_sub": f"`{HNDLR}forcesub` **(channel) (group)**",
-    "force_sub's": "**Use**: `Force Subscribe the channel in that particular group via your assistant`\
+    "force_sub's help": "**Use**: `Force Subscribe the channel in that particular group via your assistant`\
     \n**Note**: `First add assistant to that channel as admin and similary add assistant in that group with admins rights` ( add admins is not mandatory )"
 })
