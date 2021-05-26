@@ -1,7 +1,4 @@
- # Copyright (C) 2021 KeinShin@Github. All rights reserved
-
-
-
+from re import L, U
 from sqlite3.dbapi2 import Cursor, connect
 from system.datas_sqlite import Connect
 
@@ -46,7 +43,7 @@ except OperationalError:
 
 def CreateSafeUser(ida):
     ids=ida
-    c.executemany("INSERT INTO safe_user VALUES (?)", ((ids,)))
+    c.execute("INSERT INTO safe_user VALUES (?)", ((ids,)))
     conn.commit()
 
 
@@ -61,6 +58,12 @@ def Allchats(channel = None):
     s = c.fetchall()
     return list(s)
 
+def AllsafeUsers():
+    #    //
+        
+    c.execute("SELECT * FROM safe_user")
+    s = c.fetchall()
+    return list(s)
 
 
 chats = []
@@ -68,6 +71,10 @@ for i in Allchats():
    a=(i[0])
    chats.append(a)
 
+safe_users = []
+for i in AllsafeUsers():
+    a=(i[0])
+    safe_users.append(a)
 
 
 def chet(username  = None, id:bool=False):
@@ -94,14 +101,11 @@ def get_safe_user(id_):
 def insert_chet(chat, channel):
     
     c.execute("INSERT INTO chats VALUES (?, ?)", (chat, channel))
-    # for i in chet(username=chat):
-    #     for s in i:
-    #      CHANNEL.append(s)
-    #     CHANNEL_.update({
-    # chat: channel
-    # })
+
 
     conn.commit()
+
+
 
 d ={}
 ah=c.execute("SELECT * FROM chats")     
