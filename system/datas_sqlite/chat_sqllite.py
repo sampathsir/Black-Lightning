@@ -1,3 +1,7 @@
+ # Copyright (C) 2021 KeinShin@Github. All rights reserved
+
+
+
 from re import L, U
 from sqlite3.dbapi2 import Cursor, connect
 from system.datas_sqlite import Connect
