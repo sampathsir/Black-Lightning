@@ -119,4 +119,3 @@ for i in ah:
          f'{i[0]}': f'{i[1]}',})
 
 
-CreateTable()
