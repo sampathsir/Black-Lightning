@@ -9,6 +9,7 @@ import re
 from pyrogram import filters
 
 from system import  *
+from collections import OrderedDict
 from system.decorators import owner
 from collections import Counter
 from system.plugins import light
@@ -17,12 +18,11 @@ from system.datas_sqlite.pm_sqlite import (
     approve,
     approved,
     disapprove,
-    approved_ as users,
+    all_user,
     disapprove ,
     his_turn,
     update_turns,
     turn,
-    insert_user,
     remove_user
 
 )
@@ -45,131 +45,114 @@ def counter(func):
       return wrapper
 
 DEVS = "1311769691" # more to be added
-()
+
+users=list(OrderedDict.fromkeys(all_user()))
 
 
-
-"""
-Datas
-
-"""
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-blocked =[]
-def blocked_user(name):
-    blocked.append(name)
-@bot.on_callback_query(filters.regex(pattern="lightning_is_here_cant_spam"))
-@owner
-async def lightning_is_better(client, message):
-
-    user = await app.get_users(int(message.chat.id))
-    text1 = f"**Byy👋**!\n**You've been blocked have fun\n\n**If you think this is a mistake contact master via {g}**"
-    app.block_user(user.id)
-    blocked_user(user.first_name)
-    await app.send_message(message.chat.id, text1)
+        
 
 
+@light.on(["a","ap", "approve"])
+async def ap(client, message: Message):
 
+       try:
 
-urgent = []
+        #   await message.edit(f"**{language('APPROVED! USER')} USER** - {id}")
+        #   approve(id)
+          if  message.reply_to_message:
+            await message.edit(f"**{language('APPROVED! USER')} USER** - {message.reply_to_message.from_user.id}")
+            approve(message.reply_to_message.from_user.id)
 
-
-Friends = {}
-
-def add_friend(name, id):
-    Friends.update({name: id})
-def add_urgent(name):
-    urgent.append(name)
-
-
-
-@bot.on_callback_query(filters.regex(pattern="urgent"))
-async def lightning_is_better(client, message):
-    a = await app.get_me()
-    user = await app.get_users(int(message.chat.id))
-
-    if user.is_self :
-        await message.answer("This command if for stranger not for the owner!", cache_time=0, show_alert=True)
-        return
-    USER = OWNER
-
-    name = user.first_name
-    bhat = user.status  
-    text1 = "**Hello User {},  master was last online on {}**\n**Kindly wait for him to be online :)** ".format(name, bhat)
-    await app.send_message(message.chat.id, text1)
-    await app.send_message(
-        Variable.LOGS_CHAT_ID,
-        f"**Hello {USER}, [{name}]({user.id}) wants to dicuss something important!.**",
-    )
-    if user.is_deleted:
-     return
-    add_urgent(name)
+          elif " " not in  message.text:
+            await message.edit(f"**{language('APPROVED! USER')} USER** - {message.chat.id}")
+            approve(message.chat.id)
+          else:
+            name = message.text.split()[1]
+            await message.edit(f"**{language('APPROVED! USER')}** - NAME {name}")
+       
+            approve(name)
+       except BaseException as e:
+            await message.edit(e)
 
 
 
 
 
 
-@bot.on_callback_query(filters.regex(pattern="he_sucks"))
-@owner
-async def lightning_is_better(client, message):
-    user =   await app.get_users(int(message.chat.id))
-    o = await app.get_me()
-    owner = await app.get_users(int(o.id
-
-    ))
-    user_id = user.id
-    await message.edit(f"**Hello {user.first_name} if u are friend kindly contact him via {g}**\n\n__{USER}:- was last online on__ {owner.last_online_date}")
-
-    
-    
-    
-    
-    
-    
+@light.on(["da", "disap", "disapprove"])
+async def dis(client, message: Message):
+    if " " not in message.text:
 
 
+      await message.edit(f"{language('DISAPPROVED USER - ')} {message.chat.id}")
+      disapprove(message.chat.id)
+      users.remove(f'{message.chat.id}')
+
+    elif      message.reply_to_message:
+      await message.edit(f"**{language('DISAPPROVED USER - ')}** - {message.reply_to_message.from_user.first_name}")
+
+      disapprove(message.reply_to_message.from_user.id)
+      users.remove(f'{message.chat.id}')
+    elif " " in message.text:
+      name = message.text.split()[1]
+      await message.edit(f"**{language('DISAPPROVED USER - ')}** - {name}")
+      users.remove(f'{message.chat.id}')
+
+      disapprove(message.chat.id)
 
 
-@bot.on_callback_query(filters.regex(pattern="fck_ask"))
-@owner
-async def lightning_is_better(client, message):
-    user =   await app.get_users(int(message.chat.id))
-    bot_id = await bot.get_me()
-    bot_id = bot_id.id
-    await message.edit
-    btn =InlineKeyboardMarkup([[InlineKeyboardButton("Contact Him", url=f"tg://user?id={bot_id}")]])
-
-    await app.send_message(
-        user.id,
-        f"Master is busy for some reason contact him via bot link given below",
-        reply_markup=btn,
-    )
-print(users)
-
-          
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-# Decorate foo() with the counter() decorator
 @counter
 @app.on_message(filters.private & ~filters.edited & ~filters.me)
 async def pm(client, message: Message):
-    sed = ""
+       
+          
+    sed = False
+    try:
 
-    mister = await app.get_users(int(message.chat.id))
-    insert_user(message.chat.id)
-    update_turns(message.chat.id)
-    if DELETE_MSG == "on":
     
-     await app.delete_messages(message.chat.id, message.message_id, revoke=True)
-     return
-    sed_user = users
+     sed=turn(message.chat.id)[PM_LIMIT]
+     sed = True  if sed else False
+    except KeyError:
+     pass
+    mister = await app.get_users(int(message.chat.id))
+    pro = ""
+    for i in users:
+       pro += ","+ " " + f"{i}"
+    if str(message.chat.id) in pro:
+          print("YES")
+    if not str(message.chat.id) in pro :
+        update_turns(message.chat.id)
+        if PM_PERMIT.endswith(".mp4") and not str(message.chat.id) in pro:
+          await app.delete_messages(message.chat.id, message.message_id, revoke=True) 
+          await app.send_video(message.chat.id, PM_PERMIT)
+          bot_results =  await app.get_inline_bot_results("Kakrotooobot", "Pm Protect")
+          update_turns(message.chat.id)
 
-    if mister.id in sed_user:
-        return
+          await  app.send_inline_bot_result(
+    message.chat.id,
+    bot_results.query_id,
+    bot_results.results[0].id)
+
+
+        elif PM_PERMIT.endswith(".png") or PM_PERMIT.endswith(".jpg") and not str(message.chat.id) in pro:
+          await app.delete_messages(message.chat.id, message.message_id, revoke=True)
+          update_turns(message.chat.id)
+
+          await app.send_photo(message.chat.id, PM_PERMIT,)
+          await app.delete_messages(message.chat.id, message.message_id, revoke=True)
+          bot_results=await app.get_inline_bot_results(g, "Pm Protect")
+          await  app.send_inline_bot_result(
+    message.chat.id,
+    bot_results.query_id,
+    bot_results.results[0].id
+)
         
+          
+        elif sed and not str(message.chat.id) in pro:
+            await app.send_message(message.chat.id, f"__I warned you {PM_LIMIT} times now its time for action byy__\n\n**BLOCKED**")
+            await app.block_user(message.chat.id)
+
+   # sed=list(OrderedDict.fromkeys(sed))
 
     if mister.is_bot:
         return
@@ -190,82 +173,20 @@ async def pm(client, message: Message):
         await app.send_message(message.chat.id, f"{language('Scammer Alert! Therefore blocked and informed master!')}")
         await app.block_user(message.chat.id)
         return
+    if DELETE_MSG == "on":
+        
+        await app.delete_messages(message.chat.id, message.message_id, revoke=True)
+        return
     # if message.chat.is_fake:
     #     await app.send_message(message.chat.id, f"**{language('FAKE ID ALERT')}!--")
 
     #     return
-    try:
-     turns = turns = turn(message.chat.id)[str(PM_LIMIT)]
 
-    except KeyError:
-     turns = None
-    if f'{message.chat.id}' in turns and not f'{message.chat.id}' in users:
-
- 
-      await app.send_message(message.chat.id, f"__I warned you {PM_LIMIT} times now its time for action byy__\n\n**BLOCKED**")
- 
-      await app.block_user(message.chat.id)
-      return
-
-    if user_abused(message.text) and not mister.id in users :
+    if   message.chat.id in users:
+       logging.info("USER PASSES")
     
-      await app.send_message(message.chat.id, f"**ABUSE DETECTED! SO BLOCKED FROM PM :)**\n\n__If you think it's mistake use__ {g}")
-      await app.block_user(mister.id)
-      return
 
-    if f'{message.chat.id}' in users:
-        return
       
-    mkp = [
-          [
-              InlineKeyboardButton(
-                  text="Query", callback_data=f"fck_ask"
-              )
-          ],
-          [
-           InlineKeyboardButton(
-                  text="Urgent", callback_data=f"urgent"
-              )
-          ],
-          [
-           InlineKeyboardButton(
-                  text="Friend", callback_data=f"he_sucks"
-              )
-          ],
-      ]
-       
-    if PM_PERMIT.endswith(".mp4"):
-        await app.send_video(message.chat.id, PM_PERMIT, caption=Variable.PM_SECURITY_MSG, reply_markup=InlineKeyboardMarkup(mkp))
-    elif PM_PERMIT.endswith(".png") or PM_PERMIT.endswith(".jpg"):
-        await app.send_photo(message.chat.id, PM_PERMIT,  caption=Variable.PM_SECURITY_MSG, reply_markup=InlineKeyboardMarkup(mkp) )
-
-
-
-@light.on(["a","ap", "approve"])
-async def ap(client, message: Message):
-
-       try:
-
-        #   await message.edit(f"**{language('APPROVED! USER')} USER** - {id}")
-        #   approve(id)
-          if  message.reply_to_message:
-            await message.edit(f"**{language('APPROVED! USER')} USER** - {message.reply_to_message.from_user.id}")
-            approve(message.reply_to_message.from_user.id)
-            try:
-               turns = turn(message.chat.id)[str(PM_LIMIT)]
-            except KeyError:
-              turns = False
-          elif " " not in  message.text:
-            await message.edit(f"**{language('APPROVED! USER')} USER** - {message.chat.id}")
-            approve(message.chat.id)
-          else:
-            name = message.text.split()[1]
-            await message.edit(f"**{language('APPROVED! USER')}** - NAME {name}")
-       
-            approve(name)
-       except BaseException as e:
-            await message.edit(e)
-
 
 
 def user_abused(txt):
@@ -278,29 +199,9 @@ def user_abused(txt):
     # return None
     pass
 
-@light.on(["da", "disap", "disapprove"])
-async def dis(client, message: Message):
-    turns = turns = turn(message.chat.id)[str(PM_LIMIT)]
-    if " " not in message.text:
 
-
-      await message.edit(f"{language('DISAPPROVED USER - ')} {message.chat.id}")
-      disapprove(message.chat.id)
-      users.remove(f'{message.chat.id}')
-
-    elif      message.reply_to_message:
-      await message.edit(f"**{language('DISAPPROVED USER - ')}** - {message.reply_to_message.from_user.first_name}")
-
-      disapprove(message.reply_to_message.from_user.id)
-      users.remove(f'{message.chat.id}')
-    elif " " in message.text:
-      name = message.text.split()[1]
-      await message.edit(f"**{language('DISAPPROVED USER - ')}** - {name}")
-      users.remove(f'{message.chat.id}')
-
-      disapprove(message.chat.id)
 @light.on(["listapprovd"])
-async def list(client, message):
+async def liast(client, message):
     
     noice=users
     await app.send_message(message.chat.id, f"**{language('USERS - APPROVED')}**\n\n__{noice}__")
