@@ -3,7 +3,7 @@ from system.plugins.inline import Friends, USER
 import pandas as pd
 from pyrogram.types.messages_and_media.message import Message
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
+import asyncio
 from system.Config.utils import hd_no, language
 import re
 from pyrogram import filters
@@ -46,14 +46,13 @@ def counter(func):
 
 DEVS = "1311769691" # more to be added
 
-users=list(OrderedDict.fromkeys(all_user()))
-
 
         
 
 
 @light.on(["a","ap", "approve"])
 async def ap(client, message: Message):
+       users=list(OrderedDict.fromkeys(all_user()))
 
        try:
 
@@ -62,15 +61,22 @@ async def ap(client, message: Message):
           if  message.reply_to_message:
             await message.edit(f"**{language('APPROVED! USER')} USER** - {message.reply_to_message.from_user.id}")
             approve(message.reply_to_message.from_user.id)
+            await message.delete()
 
           elif " " not in  message.text:
             await message.edit(f"**{language('APPROVED! USER')} USER** - {message.chat.id}")
             approve(message.chat.id)
+            await asyncio.sleep(1)
+            await message.delete()
+
           else:
             name = message.text.split()[1]
             await message.edit(f"**{language('APPROVED! USER')}** - NAME {name}")
        
             approve(name)
+            await asyncio.sleep(1)
+            await message.delete()
+
        except BaseException as e:
             await message.edit(e)
 
@@ -81,30 +87,40 @@ async def ap(client, message: Message):
 
 @light.on(["da", "disap", "disapprove"])
 async def dis(client, message: Message):
+    users=list(OrderedDict.fromkeys(all_user()))
+
     if " " not in message.text:
 
 
       await message.edit(f"{language('DISAPPROVED USER - ')} {message.chat.id}")
+
       disapprove(message.chat.id)
       users.remove(f'{message.chat.id}')
-
+      await message.delete()
     elif      message.reply_to_message:
+      users=list(OrderedDict.fromkeys(all_user()))
+    
       await message.edit(f"**{language('DISAPPROVED USER - ')}** - {message.reply_to_message.from_user.first_name}")
 
       disapprove(message.reply_to_message.from_user.id)
       users.remove(f'{message.chat.id}')
+      await message.delete()
+
     elif " " in message.text:
+      users=list(OrderedDict.fromkeys(all_user()))
+
       name = message.text.split()[1]
       await message.edit(f"**{language('DISAPPROVED USER - ')}** - {name}")
       users.remove(f'{message.chat.id}')
-
       disapprove(message.chat.id)
+      await message.delete()
 
 
 @counter
-@app.on_message(filters.private & ~filters.edited & ~filters.me)
+@app.on_message(filters.private & ~filters.edited & ~filters.me & ~filters.via_bot)
 async def pm(client, message: Message):
        
+    users=list(OrderedDict.fromkeys(all_user()))
           
     sed = False
     try:
@@ -202,7 +218,8 @@ def user_abused(txt):
 
 @light.on(["listapprovd"])
 async def liast(client, message):
-    
+    users=list(OrderedDict.fromkeys(all_user()))
+   
     noice=users
     await app.send_message(message.chat.id, f"**{language('USERS - APPROVED')}**\n\n__{noice}__")
 
