@@ -1,4 +1,5 @@
 # Copyright (C) 2021 KeinShin@Github.
+from inspect import Attribute
 import subprocess
 
 import os.path
@@ -93,14 +94,22 @@ def o():
     try:
         a = Start("system/plugins/")
         for  i in a.x:
-             a.pat = i.replace(".py", "")   
-             a.boot()
-             logging.info("IMPORTED PLUGINS- {}".format(i))
+                try:
+
+                 a.pat = i.replace(".py", "")   
+                 a.boot()
+    
+                 logging.info("IMPORTED PLUGINS- {}".format(i))
+                except Exception:
+                  logging.error(f"ERROR NOT LOADED - {i}")
         a = Start("system/user_bot_assistant/")
         for  i in a.x:
+            try:
              a.pat = i.replace(".py", "")   
              a.boot()
              logging.info("IMPORTED ASISSTANT MODULE- {}".format(i))
+            except Exception:
+             logging.info(f"ERROR NOT LOADED {i} - {sys.exc_info()}")
     except ImportError:
     
      s=sys.exc_info()
@@ -111,68 +120,70 @@ def o():
      logging.error(f"ERROR - {s}")
      pass
     except BaseException:
-       yo=traceback.TracebackException(*sys.exc_info())#type(e).__class__, e, e.__traceback__)
-       name=yo.filename
-       no = yo.lineno
-       line = yo.lineno
-       type_=yo.exc_type
-       print(name, " ", no)
-       logging.info(f"There is an error - {type_} in file {name} line {no} - {line}, In order to prevent crash it has been renamed and plugins based on this file wont work!")
-       logging.info("Contact @lightning_support_group When to update!")
-       filename_ = name.replace(".py", ".txt")
-       os.rename(name, filename_)
-       os.remove(name)
-       pass
-
-def call():
-    o()
-    
-    try:
-        try:   
-       
-          bot.start()
-          bot.join_chat(chet)
-          text = f"BLACK USERBOT has benn deployed."
-          bot.send_message(chet, text)
-        except BaseException:
-           logging.error("CANNOT ADD ASSISTANT TO LOGS CHAT")
-           pass
-        except SessionExpired:
-            logging.info("Your String Session is not valid create a new one for more contact @lightning_support_group, till bot stopped")
-            exit()
-            
-        except SessionRevoked:
-             logging.info("Bot Father Api Token Revoked replace old with new one till bot stopped")
-             exit()
-        except AuthKeyDuplicated:
-             logging.error("You can not use same token in two or more apps/client, stop one token!")
-             exit()
-        except AccessTokenInvalid:
-            logging.error("Bot token expired or not valid create new one.")
-            exit()
-        except AccessTokenInvalid:
-            logging.error("Bot token not valid")
-            exit()
+        yo=traceback.TracebackException(*sys.exc_info())
         try:
-         app.run() 
-        except SessionRevoked:
-           logging.error("String Session Revoked or Terminated! Create a new one")
-           exit()
-        except SessionExpired:
-            logging.info("Your String Session is not valid create a new one for more contact @lightning_support_group, till bot stopped")
-            exit()
-        except AuthKeyDuplicated:
-             logging.error("You can not use same strings in two or more apps/client, terminate one of create another")
-             exit()
-    
-    except ApiIdInvalid:
-        logging.error("The Given Api Id is invalid,  grab ur Id from my.telegram.org Now!")
-        exit()
-    logging.info(f"© Black-Lightning - KeinShin, All  rights Reserved.")
-    logging.info(f"Plugins and Whole System Loaded!, do {system.HNDLR}alive to check!")
-    logging.info(f"Also add assistant to log channel to access more features!")
-    idle()
- 
+           name=yo.filename
+           no = yo.lineno
+           line = yo.lineno
+           type_=yo.exc_type
+        except AttributeError:
+            pass
+        logging.info(f"There is an error - {type_} in file {name} line {no} - {line}, In order to prevent crash it has been renamed and plugins based on this file wont work!")
+        logging.info("Contact @lightning_support_group When to update!")
+        filename_ = name.replace(".py", ".txt")
+        os.rename(name, filename_)
+        os.remove(name)
+        importlib.import_module("system.plugins.Pgit")
+        logging.info("Only Updater will work now!")
+        app.run()
+        return
 
-app.loop.run_until_complete(call())
+o()
+
+try:
+    try:   
+   
+      bot.start()
+      bot.join_chat(chet)
+      text = f"BLACK USERBOT has benn deployed."
+      bot.send_message(chet, text)
+    except BaseException:
+       logging.error("CANNOT ADD ASSISTANT TO LOGS CHAT")
+       pass
+    except SessionExpired:
+        logging.info("Your String Session is not valid create a new one for more contact @lightning_support_group, till bot stopped")
+        exit(1)
+        
+    except SessionRevoked:
+         logging.info("Bot Father Api Token Revoked replace old with new one till bot stopped")
+         exit(1)
+    except AuthKeyDuplicated:
+         logging.error("You can not use same token in two or more apps/client, stop one token!")
+         exit(1)
+    except AccessTokenInvalid:
+        logging.error("Bot token expired or not valid create new one.")
+        exit(1)
+    except AccessTokenInvalid:
+        logging.error("Bot token not valid")
+        exit(1)
+    try:
+     logging.info(f"© Black-Lightning - KeinShin, All  rights Reserved.")
+     logging.info(f"Plugins and Whole System Loaded!, do {system.HNDLR}alive to check!")
+     logging.info(f"Also add assistant to log channel to access more features!")
+     app.run() 
+     idle()
+    except SessionRevoked:
+       logging.error("String Session Revoked or Terminated! Create a new one")
+       exit(1)
+    except SessionExpired:
+        logging.info("Your String Session is not valid create a new one for more contact @lightning_support_group, till bot stopped")
+        exit(1)
+    except AuthKeyDuplicated:
+         logging.error("You can not use same strings in two or more apps/client, terminate one of create another")
+         exit(1)
+except ApiIdInvalid:
+    logging.error("The Given Api Id is invalid,  grab ur Id from my.telegram.org Now!")
+    exit(1)
+
+
 
