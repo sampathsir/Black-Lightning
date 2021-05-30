@@ -15,14 +15,35 @@ import logging
 import os
 import system
 
-from textblob import TextBlob
-from translate import Translator
+from googletrans import Translator, LANGUAGES
+from googletrans.models import Translated
 try:
 
  import heroku3
 except Exception:
  os.system("pip3 install heroku3")
- 
+a = ""
+async def owner_name():
+
+    global a
+
+    a += (await system.app.get_me() ).username
+    return a
+b = ""
+async def bot_name():
+    global b
+
+
+    b += (await system.bot.get_me() ).username
+    return b
+
+# class Client(object):
+    
+#     async def owner(self):
+#         self.usero = await system.app.get_me()
+#         self.username = self.usero.username
+#     # def user(self):
+    #     return self.username
 
 
 # from var import Var
@@ -31,7 +52,13 @@ class Variable(object):
     TG_API_ID = os.environ.get("TG_APP_ID", None)
     TG_API_HASH = os.environ.get("TG_API_HASH", None)
     TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", None)
-    TG_BOT_USER_NAME = os.environ.get("TG_BOT_USER_NAME", None)
+    AFK_PM_MESSAGE = os.environ.get("AFK_PM_MESSAGE", None)
+    TG_BOT_USER_NAME = os.environ.get("TG_BOT_USER_NAME", "@Kakrotooobot")
+    PROTECTION = os.environ.get("PROTECTION", None)
+    if PROTECTION is None:
+        PROTECTION = "ON"
+    if  not TG_BOT_USER_NAME:
+        TG_BOT_USER_NAME = f'@{a}'
     APP_NAME = os.environ.get("APP_NAME", None)
     HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY", None)
     HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", None)
@@ -46,26 +73,32 @@ class Variable(object):
         NO_ROWS_HELP_MENU = 3
     ENVIRONMENT = os.environ.get("ENVIRONMENT", False)
 
-        
+    # clien = Client()
     NO_COLUMNS_HELP_MENU = os.environ.get("NO_COLUMNS_HELP_MENU", None)
     if NO_COLUMNS_HELP_MENU is None:
         NO_COLUMNS_HELP_MENU = 7
-    # OWNER_NAME = os.environ.get("OWNER_NAME", None)
-    OWNER_NAME = os.environ.get("OWNER_NAME", None)
+  
+    USER_NAME = os.environ.get("USER_NAME", None)
+    OWNER_NAME = USER_NAME
+    if OWNER_NAME is None:
+  
+        OWNER_NAME = b
     PM_SECURITY_MSG = os.environ.get("PM_SECURITY_MSG", None)
-    SUDO_IDS = os.environ.get("SUDO_ID", '12345').split()
+    SUDO_IDS = os.environ.get("SUDO_ID", None)
+    if SUDO_IDS is not None:
+        SUDO_IDS = SUDO_IDS.split()
     LOGS_CHAT_ID = os.environ.get("LOGS_CHAT_ID", None)
+    COUNTRY = os.environ.get("COUNTRY", None)
+    if COUNTRY is None:
+        COUNTRY = "IN"
     if PM_SECURITY_MSG is None:
         PM_SECURITY_MSG = (
-        f"**Hello User..**"
-        f"**I appreciate the reason for which you came but {str(OWNER_NAME)} is under Black Lightning Security*\n\n"
-        f"**Choose the reason :)** "
+        f"**Hello User..\n**"
+        f"**{str(OWNER_NAME)} is under  PM Security Your Message will be deleted until u're approved\nIf it is urgent contact him via {TG_BOT_USER_NAME}**"
     )
     else:
         WARNING = PM_SECURITY_MSG
     HELP_MENU_TXT = os.environ.get("HELP_MENY_TXT", None)
-            
-    COUNTRY = os.environ.get("COUNTRY", None)
     if HELP_MENU_TXT is not None:
         HELP_MENU_TXT.split()[0]
     else:
@@ -78,9 +111,7 @@ class Variable(object):
 
 Var = Variable
 
-class Client:
-    def __init__(self):
-     self.herokuclient = heroku3.from_key(Variable.HEROKU_API_KEY)
+
 # Ported From https://github.com/jaskaranSM/HerokuManagerBot
 
     
@@ -90,7 +121,8 @@ class HerokuHelper:
         self.APP_NAME = appName
         self.herokuclient = self.getherokuclient()
         self.app = self.herokuclient.apps()[self.APP_NAME]
-        
+
+        self.herokuclient2 = heroku3.from_key(Variable.HEROKU_API_KEY)
     def getherokuclient(self):
         return heroku3.from_key(self.API_KEY)
 
@@ -177,15 +209,12 @@ def get_readable_time(seconds: int) -> str:
 
 
 def language(text: str):
-    # if "**" or "__" or "~~":
-    #     a=[i for i in range(len(string)) if string.startswith('**', i)]
+ 
 
-    lang = TextBlob(text)
-    translator= Translator(from_lang=lang.detect_language(),to_lang=Variable.LANGUAGE)
-    translation = translator.translate(text)
-    return translation
+    # translator = Translator()
+    # translation = translator.translate(text,  dest='en')
 
-
+    return text
 
 def hd_no(txt: str):
     contains_digit = False
