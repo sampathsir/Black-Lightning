@@ -119,7 +119,8 @@ async def dis(client, message: Message):
 @counter
 @app.on_message(filters.private & ~filters.edited & ~filters.me & ~filters.via_bot)
 async def pm(client, message: Message):
-       
+    if Variable.PROTECTION == "OFF":
+      return   
     users=list(OrderedDict.fromkeys(all_user()))
           
     sed = False
@@ -134,8 +135,7 @@ async def pm(client, message: Message):
     pro = ""
     for i in users:
        pro += ","+ " " + f"{i}"
-    if str(message.chat.id) in pro:
-          print("YES")
+
     if not str(message.chat.id) in pro :
         update_turns(message.chat.id)
         if PM_PERMIT.endswith(".mp4") and not str(message.chat.id) in pro:
