@@ -1,7 +1,7 @@
  # Copyright (C) 2021 KeinShin@Github. All rights reserved
 
 
-
+from collections import OrderedDict
 from system.datas_sqlite import c, conn
 from sqlite3 import OperationalError
 try:
@@ -34,15 +34,21 @@ def approve(ids):
 
 def approved():
 
-    c.execute("SELECT * FROM approved_users")
+    c.execute("SELECT * FROM approved_users " )
     s = c.fetchall()
+    
     return s
+sed = False
+def all_user():
+
+   approved_ = []
+   for i in  approved():
+       approved_.append(i[0])
+   approved_niggas = list(OrderedDict.fromkeys(approved_))
+   return approved_niggas
 
 
-approved_ = []
-for i in  approved():
-    approved_.append(i[0])
-# print(approved_)
+
 def disapprove(ida):
     c.execute(f"DELETE from approved_users WHERE users == {ida}")
     conn.commit()
@@ -55,11 +61,9 @@ def his_turn(user):
 
 
 
-def insert_user(user):
-    c.execute("INSERT INTO turns VALUES (?, 0)", ((user,)))
-    conn.commit()
-def update_turns(user):
 
+def update_turns(user):
+    c.execute("INSERT INTO turns VALUES (?, ?)", (user, 0))
 
     c.execute(f"UPDATE turns SET turn = turn + 1 WHERE id == {user}")
     conn.commit()
@@ -85,4 +89,4 @@ sed=[str(i) for i in range (0, 5)]
 sed=" AND ".join(sed)
 def remove_user(user_):
     c.execute(f"DELETE  FROM turns WHERE turn = (?, ?, ?, ?){PM_LIMIT} AND id  == {user_}", (sed))
-    conn.commit(
+    conn.commit()
