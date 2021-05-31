@@ -134,7 +134,7 @@ def o():
         os.rename(name, filename_)
         os.remove(name)
         importlib.import_module("system.plugins.Pgit")
-        logging.info("Only Updater will work now! with")
+        logging.info("Only Updater will work from now util u update a fix the bug :P! with")
         app.run()
         return
 
