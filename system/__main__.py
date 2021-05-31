@@ -134,7 +134,7 @@ def o():
         os.rename(name, filename_)
         os.remove(name)
         importlib.import_module("system.plugins.Pgit")
-        logging.info("Only Updater will work now!")
+        logging.info("Only Updater will work now! with")
         app.run()
         return
 
@@ -144,9 +144,16 @@ try:
     try:   
    
       bot.start()
-      bot.join_chat(chet)
-      text = f"BLACK USERBOT has benn deployed."
-      bot.send_message(chet, text)
+
+      try:
+  
+        bot.join_chat(chet)
+       
+        text = f"BLACK USERBOT has benn deployed."
+        bot.send_message(chet, text)
+      except UserAlreadyParticipant:
+        pass
+
     except BaseException:
        logging.error("CANNOT ADD ASSISTANT TO LOGS CHAT")
        pass
