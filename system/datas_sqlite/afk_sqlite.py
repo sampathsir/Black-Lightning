@@ -49,5 +49,4 @@ def get_reason():
         return a[0][1]
     else:
         return None
-print(get_afk())
 # update_afk("True", "Sleep")
