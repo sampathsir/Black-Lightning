@@ -53,6 +53,7 @@ async def n(client, message):
         msg=f"""
 **Hello User @{message.from_user.username}!
 This is an automated message from my assistant because I'm [AFK]**
+
 __I was Last online __ - {user.status}
 **Reason for afk**:
  
